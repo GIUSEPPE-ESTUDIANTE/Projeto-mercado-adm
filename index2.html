@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>Mercado Judá | Folheto</title>
+
+<style>
+:root{
+ --red:#b71c1c;
+ --bg:#f2f2f2;
+ --card:#fff;
+}
+
+*{box-sizing:border-box}
+body{
+ margin:0;
+ font-family:Arial, Helvetica, sans-serif;
+ background:var(--bg);
+}
+
+/* HEADER */
+header{
+ background:var(--red);
+ color:#fff;
+ padding:12px;
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+}
+
+/* MENU */
+#menuBtn{
+ font-size:26px;
+ cursor:pointer;
+}
+#menu{
+ position:fixed;
+ top:0;
+ left:-220px;
+ width:220px;
+ height:100%;
+ background:#fff;
+ box-shadow:5px 0 15px rgba(0,0,0,.3);
+ padding:15px;
+ transition:.3s;
+}
+#menu a{
+ display:block;
+ margin:10px 0;
+ color:#333;
+ text-decoration:none;
+ font-weight:bold;
+}
+
+/* PRODUTOS */
+#produtos{
+ display:grid;
+ grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
+ gap:15px;
+ padding:15px;
+}
+.prod{
+ background:var(--card);
+ border-radius:12px;
+ padding:10px;
+ text-align:center;
+ box-shadow:0 8px 20px rgba(0,0,0,.1);
+}
+.prod img{
+ width:100%;
+ height:120px;
+ object-fit:cover;
+ border-radius:8px;
+}
+.prod button{
+ margin-top:8px;
+ background:var(--red);
+ color:#fff;
+ border:none;
+ padding:8px;
+ width:100%;
+ border-radius:6px;
+ cursor:pointer;
+}
+
+/* ROLETA */
+#roletaBox{
+ display:none;
+ text-align:center;
+ padding:15px;
+}
+#wheel{
+ width:200px;
+ height:200px;
+ border-radius:50%;
+ border:10px solid var(--red);
+ margin:10px auto;
+ background:conic-gradient(
+  #ffd54f 0deg 60deg,
+  #ff7043 60deg 120deg,
+  #81c784 120deg 180deg,
+  #64b5f6 180deg 240deg,
+  #ba68c8 240deg 300deg,
+  #e57373 300deg 360deg
+ );
+ transition:transform 4s cubic-bezier(.17,.67,.83,.67);
+}
+#spinBtn{
+ background:var(--red);
+ color:#fff;
+ border:none;
+ padding:10px 15px;
+ border-radius:6px;
+ cursor:pointer;
+}
+
+/* CHAT */
+#chatIcon{
+ position:fixed;
+ bottom:20px;
+ right:20px;
+ width:60px;
+ height:60px;
+ background:var(--red);
+ color:#fff;
+ border-radius:50%;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ font-size:26px;
+ cursor:pointer;
+ box-shadow:0 5px 15px rgba(0,0,0,.4);
+}
+#chat{
+ position:fixed;
+ bottom:90px;
+ right:20px;
+ width:300px;
+ background:#fff;
+ border-radius:12px;
+ box-shadow:0 10px 25px rgba(0,0,0,.3);
+ display:none;
+}
+#chat header{
+ border-radius:12px 12px 0 0;
+ justify-content:center;
+}
+#msgs{
+ height:200px;
+ overflow:auto;
+ padding:10px;
+ font-size:14px;
+}
+.chatBtn{
+ width:100%;
+ border:none;
+ background:var(--red);
+ color:#fff;
+ padding:8px;
+ margin:3px 0;
+ cursor:pointer;
+ border-radius:6px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+ <span id="menuBtn" onclick="toggleMenu()">☰</span>
+ <b>Mercado Judá</b>
+ <span>Pontos: <span id="pontos">0</span></span>
+</header>
+
+<!-- MENU -->
+<div id="menu">
+ <a href="#" onclick="mostrarProdutos()">🛒 Produtos</a>
+ <a href="#" onclick="mostrarRoleta()">🎯 Roleta</a>
+ <a href="pagamento.html">💳 Pagamento</a>
+ <a href="login.html">🔐 Login</a>
+ <a href="cadastro.html">📝 Cadastro</a>
+</div>
+
+<!-- PRODUTOS -->
+<div id="produtos"></div>
+
+<!-- ROLETA -->
+<div id="roletaBox">
+ <h3>Gire a Roleta</h3>
+ <div id="wheel"></div>
+ <button id="spinBtn" onclick="girar()">GIRAR</button>
+ <p id="resultado"></p>
+</div>
+
+<!-- CHAT -->
+<div id="chatIcon" onclick="toggleChat()">💬</div>
+
+<div id="chat">
+ <header>Ana 🤖 Atendimento</header>
+ <div id="msgs">
+  <b>Ana:</b> Olá 😊 Como posso te ajudar?
+ </div>
+ <button class="chatBtn" onclick="resposta('produtos')">🛒 Produtos</button>
+ <button class="chatBtn" onclick="resposta('promo')">🎯 Promoções</button>
+ <button class="chatBtn" onclick="resposta('carrinho')">🧺 Carrinho</button>
+ <button class="chatBtn" onclick="resposta('pagamento')">💳 Pagamento</button>
+ <button class="chatBtn" onclick="resposta('login')">🔐 Login / Cadastro</button>
+ <button class="chatBtn" onclick="resposta('libras')">🤟 Modo Libras</button>
+ <button class="chatBtn" onclick="fim()">❌ Finalizar</button>
+</div>
+
+<script>
+/* MENU */
+function toggleMenu(){
+ menu.style.left = menu.style.left=="0px"?"-220px":"0px";
+}
+
+/* PRODUTOS */
+let produtos=[
+ {n:"Leite",p:5,img:"https://images.unsplash.com/photo-1585238342028-4bbc76d59b6d"},
+ {n:"Carne",p:35,img:"https://images.unsplash.com/photo-1604908177522-040b8b9c3c3a"},
+ {n:"Sabão",p:4,img:"https://images.unsplash.com/photo-1581578731548-c64695cc6952"},
+ {n:"Café",p:12,img:"https://images.unsplash.com/photo-1509042239860-f550ce710b93"},
+ {n:"Açúcar",p:5,img:"https://images.unsplash.com/photo-1627485937980-221c88ac04c5"},
+ {n:"Arroz",p:25,img:"https://images.unsplash.com/photo-1604908177225-1c20c98f1c29"},
+ {n:"Feijão",p:9,img:"https://images.unsplash.com/photo-1615485925600-97237c4fc1ec"},
+ {n:"Morango",p:8,img:"https://images.unsplash.com/photo-1567306226416-28f0efdc88ce"},
+ {n:"Maçã",p:6,img:"https://images.unsplash.com/photo-1567306226416-28f0efdc88ce"}
+];
+
+let cart=[];
+let u=JSON.parse(localStorage.getItem("usuario"))||{pontos:0};
+pontos.innerText=u.pontos;
+
+function mostrarProdutos(){
+ produtosDiv.innerHTML="";
+ roletaBox.style.display="none";
+ produtos.forEach(x=>{
+  let d=document.createElement("div");
+  d.className="prod";
+  d.innerHTML=`
+   <img src="${x.img}">
+   <b>${x.n}</b><br>
+   R$ ${x.p.toFixed(2)}
+   <button onclick="add('${x.n}',${x.p})">Adicionar</button>`;
+  produtosDiv.appendChild(d);
+ });
+}
+let produtosDiv=document.getElementById("produtos");
+mostrarProdutos();
+
+function add(n,p){
+ cart.push({n,p});
+ localStorage.setItem("cart",JSON.stringify(cart));
+ u.pontos+=10;
+ localStorage.setItem("usuario",JSON.stringify(u));
+ pontos.innerText=u.pontos;
+ alert("Produto adicionado!");
+}
+
+/* ROLETA REAL */
+let ang=0;
+function mostrarRoleta(){
+ produtosDiv.innerHTML="";
+ roletaBox.style.display="block";
+}
+function girar(){
+ let desconto=Math.floor(Math.random()*61);
+ let giro=360*5 + desconto*6;
+ ang+=giro;
+ wheel.style.transform=`rotate(${ang}deg)`;
+ setTimeout(()=>{
+  localStorage.setItem("roleta",desconto);
+  resultado.innerText="Você ganhou "+desconto+"% de desconto!";
+ },4000);
+}
+
+/* CHAT */
+function toggleChat(){
+ chat.style.display = chat.style.display=="block"?"none":"block";
+}
+function resposta(t){
+ let r="";
+ if(t=="produtos") r="Clique em adicionar produto para comprar 🛒";
+ if(t=="promo") r="Use a roleta para até 60% de desconto 🎯";
+ if(t=="carrinho") r="Tudo que você adiciona vai para o carrinho 🧺";
+ if(t=="pagamento") r="Aceitamos Pix, cartão, boleto 💳";
+ if(t=="login") r="Faça login ou cadastro na tela inicial 🔐";
+ if(t=="libras") r="🤟 🛒 ➕ 💳 📦 (Modo Libras Ativo)";
+ msgs.innerHTML+=`<div><b>Ana:</b> ${r}</div>`;
+ msgs.scrollTop=msgs.scrollHeight;
+}
+function fim(){
+ msgs.innerHTML+=`<div><b>Ana:</b> Obrigada pelo contato ❤️</div>`;
+}
+</script>
+
+</body>
+</html>
